@@ -163,8 +163,6 @@ export default {
             } else {
               fileName = contentDisposition.split('filename*=')[1];
             }
-            console.log(contentDisposition);
-            console.log(fileName);
           }
           link.setAttribute('download', fileName);
           document.body.appendChild(link);
@@ -175,7 +173,7 @@ export default {
         });
     },
     updateEntries() {
-      axios.get(`${self.backend_url}/update_entries`)
+      axios.get(`${this.backend_url}/update_entries`)
         .then(response => {
           if (response.data.success) {
             this.getEntries();
@@ -190,7 +188,7 @@ export default {
     downloadByDate() {
       const start_time = this.range[0].getTime();
       const end_time = this.range[1].getTime();
-      axios.get(`${self.backend_url}/get_csv`, {
+      axios.get(`${this.backend_url}/get_csv`, {
         responseType: 'blob', // important
         params: {
           start_time: start_time,
@@ -210,8 +208,6 @@ export default {
           } else {
             fileName = contentDisposition.split('filename*=')[1];
           }
-          console.log(contentDisposition);
-          console.log(fileName);
         }
         link.setAttribute('download', fileName);
         document.body.appendChild(link);
