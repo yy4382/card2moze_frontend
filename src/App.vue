@@ -65,6 +65,10 @@ export default {
     }
   },
   methods: {
+
+
+    // 表格选择处理
+
     isSelected(index) {
       return this.selectedIndices.includes(index);
     },
@@ -133,6 +137,9 @@ export default {
       this.selectedItems = [];
       this.rangeStartIndex = null;
     },
+
+
+
     getEntries() {
       axios.get(`${this.backend_url}/get_entries`)
         .then(response => {
@@ -144,45 +151,22 @@ export default {
     },
     downloadSelected() {
       const payload = this.selectedItems;
-      axios({
-        url: `${this.backend_url}/get_csv`,
-        method: 'POST',
-        responseType: 'blob', // important
-        data: payload,
-      })
-        .then((response) => {
-          const url = window.URL.createObjectURL(new Blob([response.data]));
-          const link = document.createElement('a');
-          link.href = url;
-          const contentDisposition = response.headers['content-disposition'];
-          let fileName = 'unknown';
-          if (contentDisposition) {
-            const matches = contentDisposition.match(/filename\*=(UTF-8''|'')(.*?)$/);
-            if (matches && matches.length > 2) {
-              fileName = decodeURIComponent(matches[2]);
-            } else {
-              fileName = contentDisposition.split('filename*=')[1];
-            }
-          }
-          link.setAttribute('download', fileName);
-          document.body.appendChild(link);
-          link.click();
-        })
-        .catch(err => {
-          console.error('Error submitting data', err)
-        });
-    },
-    updateEntries() {
-      axios.get(`${this.backend_url}/update_entries`)
+      axios.post(`${this.backend_url}/get_csv`, payload)
         .then(response => {
           if (response.data.success) {
-            this.getEntries();
+            this.downloadCsv(response)
+          } else if (response.data.error == 'No entry found') {
+            console.log(response.data.error);
+          } else if (response.data.error == 'Request for types') {
+            const noTypeStores = response.data.stores;
+            const noTypeStoresString = noTypeStores.join(", ");
+            alert("need types:" + noTypeStoresString);
           } else {
             console.log(response.data.error);
           }
         })
         .catch(error => {
-          console.log('Error retrieving data', error);
+          console.log('Error submitting data', error);
         });
     },
     downloadByDate() {
@@ -196,25 +180,50 @@ export default {
           timestamp: true
         }
       }).then((response) => {
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement('a');
-        link.href = url;
-        const contentDisposition = response.headers['content-disposition'];
-        let fileName = 'unknown';
-        if (contentDisposition) {
-          const matches = contentDisposition.match(/filename\*=(UTF-8''|'')(.*?)$/);
-          if (matches && matches.length > 2) {
-            fileName = decodeURIComponent(matches[2]);
-          } else {
-            fileName = contentDisposition.split('filename*=')[1];
-          }
-        }
-        link.setAttribute('download', fileName);
-        document.body.appendChild(link);
-        link.click();
+        this.downloadCsv(response);
       })
-        .catch(err => {
-          console.error('Error submitting data', err)
+      .catch(err => {
+        console.error('Error submitting data', err)
+      });
+    },
+    downloadCsv(response) {
+      const csv = response.text.csv
+      const start_time = response.text.start_time
+      const end_time = response.text.end_time
+      // Create a Blob object from the CSV string
+      const blob = new Blob([csv], { type: 'text/csv' });
+      
+      // Create a URL for the Blob object
+      const url = URL.createObjectURL(blob);
+      
+      // Create a link element
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${start_time} -- ${end_time}.csv`;
+      
+      // Append the link to the document body
+      document.body.appendChild(link);
+      
+      // Programmatically click the link to trigger the download
+      link.click();
+      
+      // Remove the link from the document body
+      document.body.removeChild(link);
+      
+      // Revoke the URL to free up memory
+      URL.revokeObjectURL(url);
+    },
+    updateEntries() {
+      axios.get(`${this.backend_url}/update_entries`)
+        .then(response => {
+          if (response.data.success) {
+            this.getEntries();
+          } else {
+            console.log(response.data.error);
+          }
+        })
+        .catch(error => {
+          console.log('Error retrieving data', error);
         });
     },
   },
