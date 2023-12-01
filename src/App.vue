@@ -153,7 +153,7 @@ export default {
       const payload = this.selectedItems;
       axios.post(`${this.backend_url}/get_csv`, payload)
         .then(response => {
-          if (response.data.success) {
+                    if (response.data.success) {
             this.downloadCsv(response)
           } else if (response.data.error == 'No entry found') {
             console.log(response.data.error);
@@ -187,9 +187,9 @@ export default {
       });
     },
     downloadCsv(response) {
-      const csv = response.text.csv
-      const start_time = response.text.start_time
-      const end_time = response.text.end_time
+      const csv = response.data.csv;
+      const start_time = response.data.start_time;
+      const end_time = response.data.end_time;
       // Create a Blob object from the CSV string
       const blob = new Blob([csv], { type: 'text/csv' });
       
