@@ -55,7 +55,7 @@ export default {
       longPressDelay: 1000,
       isRangeSelectMode: false,
       rangeStartIndex: null,
-      backend_url: null
+      backend_url: ""
     }
   },
   watch: {
