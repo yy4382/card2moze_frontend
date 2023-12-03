@@ -90,7 +90,7 @@ export default {
 .content {
   flex-grow: 1;
   /* 这将确保内容区域占据所有除了TabBar所需空间的空间 */
-  padding-bottom: 70px;
+  padding-bottom: 50px;
   /* 这将确保内容底部和TabBar之间有足够的间隙 */
 }
 
@@ -109,6 +109,12 @@ export default {
   /* 确保内容底部和TabBar之间有足够的间隙 */
   box-shadow: 0px -1px 5px 0px rgba(0, 0, 0, 0.2);
   /* 如果需要阴影效果 */
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: #f0f0f0;
+  /* padding: 10px; */
+  box-sizing: border-box;
 }
 
 .be-input {
