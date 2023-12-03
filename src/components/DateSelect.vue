@@ -1,6 +1,6 @@
 <template>
   <VueDatePicker v-model="range" range />
-  <button @click="downloadByDate">获取选定时间内的消费记录csv</button>
+  <button @click="downloadByDate" class="functionalButtons">获取选定时间内的消费记录csv</button>
 </template>
 
 <script>
@@ -9,6 +9,7 @@ import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 
 export default {
+  emits: ['csvDownload'], 
   props: { backend_url: { type: String, default: "" } },
   components: {
     VueDatePicker

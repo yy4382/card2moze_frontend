@@ -1,12 +1,15 @@
 <template>
   <div>
-    <button @click="getEntries">获取条目</button>
-    <button @click="updateEntries">请求更新条目</button>
-    <button @click="downloadSelected">下载所选条目的CSV</button>
+    <button @click="getEntries" class="functionalButtons">获取条目</button>
+    <button @click="updateEntries" class="functionalButtons">请求更新条目</button>
+    <button @click="downloadSelected" class="functionalButtons">下载所选条目的CSV</button>
   </div>
-  <div>
-    <button @click="toggleSelectionMode">
-      {{ isRangeSelectMode ? '单选模式（仍可使用⌘和⇧）' : '多选模式（移动端）' }}
+  <div style="display: flex; justify-content: right; margin-bottom: 5px;">
+    <label for="toggleMode">
+      {{ isRangeSelectMode ? '多选模式（移动端）' : '单选模式（仍可使用⌘和⇧）' }}
+    </label>
+    <button @click="toggleSelectionMode" id="toggleMode">
+      切换模式
     </button>
   </div>
   <table class="custom-table">
@@ -36,6 +39,7 @@
 import axios from 'axios'
 
 export default {
+  emits: ['csvDownload'],
   props: { backend_url: { type: String, default: "" } },
   // components: {
   //   VueDatePicker

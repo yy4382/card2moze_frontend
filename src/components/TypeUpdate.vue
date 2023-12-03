@@ -1,5 +1,9 @@
 <template>
-  <div class="template-select">
+  <button @click="getNoTypes" class="functionalButtons">刷新</button>
+  <div v-if="!needsUpdate">
+    <p>没有需要更新的类别</p>
+  </div>
+  <div class="template-select" v-if="needsUpdate">
     <select v-model="selectedNoType">
       <option v-for="noType in noTypes" :key="noType" :value="noType">{{ noType }}</option>
     </select>
@@ -26,8 +30,8 @@
         </tr>
       </tbody>
     </table>
+    <button class="functionalButtons" @click="updateType">更新类别</button>
   </div>
-  <button @click="updateType">更新类别</button>
 </template>
   
 <script>
@@ -41,6 +45,7 @@ export default {
       templates: [],
       selectedRow: null,
       selectedNoType: null,
+      needsUpdate: false
     }
   },
   methods: {
@@ -52,11 +57,20 @@ export default {
       axios.get(`${this.backend_url}/get_no_types`)
         .then((response) => {
           if (!response.data.success) {
+            if (response.data.error == "no no_type items") {
+              this.needsUpdate = false;
+              return;
+            }
             alert(response.data.error);
             return;
           }
           this.noTypes = response.data.no_type;
           this.templates = response.data.templates;
+          if (this.noTypes.length > 0) {
+            this.needsUpdate = true;
+          } else {
+            this.needsUpdate = false;
+          }
         })
         .catch(err => {
           console.error('Error submitting data', err)

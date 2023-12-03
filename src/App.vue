@@ -3,7 +3,7 @@
     <div class="be-input"><label for="backend-url">Backend URL:</label>
       <input id="backend-url" v-model="backend_url" type="text">
     </div>
-    <div class="content" >
+    <div class="content">
       <TableSelect v-if="selectedTab == 0" :backend_url="backend_url" @csvDownload="downloadCSV" />
       <DateSelect v-if="selectedTab == 1" :backend_url="backend_url" @csvDownload="downloadCSV" />
       <TypeUpdate v-if="selectedTab == 2" :backend_url="backend_url" />
@@ -27,16 +27,24 @@ export default {
     DateSelect,
     SettingsPage,
     TypeUpdate
-},
+  },
   data() {
     return {
       selectedTab: '',
       backend_url: ""
     };
   },
+  created() {
+    this.selectedTab = 0;
+    this.backend_url = localStorage.getItem('backend_url') || "";
+  },
+  watch: {
+    backend_url(newVal) {
+      localStorage.setItem('backend_url', newVal);
+    }
+  },
   methods: {
     handleTabSelected(tab) {
-      console.log('Tab selected:', tab);
       this.selectedTab = tab;
     },
     downloadCSV(data) {
@@ -65,13 +73,13 @@ export default {
 
       // Revoke the URL to free up memory
       URL.revokeObjectURL(url);
-    
+
     }
   }
 };
 </script>
 
-<style scoped>
+<style>
 .page-container {
   display: flex;
   flex-direction: column;
@@ -111,4 +119,14 @@ export default {
   padding: 10px;
 }
 
+.functionalButtons {
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 5px;
+  border-radius: 5px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 </style>
