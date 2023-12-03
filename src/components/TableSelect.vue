@@ -61,6 +61,7 @@ export default {
     items() {
       this.selectedIndices = [];
       this.selectedItems = [];
+      localStorage.setItem('items', JSON.stringify(this.items));
     }
   },
   methods: {
@@ -184,7 +185,14 @@ export default {
     },
   },
   created() {
-    this.getEntries();
+    const items = localStorage.getItem('items');
+    console.log(items)
+    if (items === null) {
+      // console.log(this.items)
+      this.getEntries();
+    } else {
+      this.items = JSON.parse(items);
+    }
   }
 }
 </script>
